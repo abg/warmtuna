@@ -1,0 +1,59 @@
+Introduction
+============
+
+Warm Tuna is a plugin for the Holland Backup Framework that performs a warm
+backup of MySQL similar to the mysqlhotcopy utility.  This utility will either
+globally acquire a read lock via FLUSH TABLES WITH READ LOCK or lock all tables
+in a particular database with LOCK TABLES name READ LOCAL, .... Once tables are
+locked via some method the underlying datafiles will be archived by the
+configured archiving method.
+
+Usefulness
+----------
+
+This backup plugin is largely useful if you have primarily MyISAM tables or
+other formats that can be archived by locking tables and copying the raw data
+files.  This will not work for InnoDB tables and for most common environments
+you will want to look at other methods such as mysqldump, LVM snapshots or
+InnoDB hot copy/Xtrabackup.
+
+Options
+-------
+
+lock-method = flush-lock | lock-tables | none
+    Whether to use FLUSH TABLES WITH READ LOCK or just LOCK TABLES
+
+myisam-partial-indexes = yes|no
+    Only copy the first 2KB of MYI files.  This can speed up the backup time
+    in some cases.  On restore, the tables will need to be repaired.
+
+flush-logs = yes|no
+    Perform a FLUSH LOGS before starting the backup and after acquiring a lock
+    Useful in conjunction with replication-info = yes
+
+replication-info = yes|no
+    Record the replication status after locking tables.  This is only useful
+    if a global lock is acquired.  This will attempt to log both the local
+    binary log position as well as the slave's position relative to its
+    master if the MySQL server is a slave.
+
+archive-format = tar|zip64|directory
+    What method to archive tables as.  Defaults to directory.
+
+
+Archiving
+---------
+
+Warm Tuna currently supports 3 archiving methods:
+
+* compressed tar archives
+* zip64 archives
+* simple directory archives
+
+With both tar and directory methods Warm Tuna will use Holland's configurable
+compression framework so you can compress files just like any other plugin.
+
+With zip64, this uses the internal zlib compression and so external methods
+are not supported.
+
+

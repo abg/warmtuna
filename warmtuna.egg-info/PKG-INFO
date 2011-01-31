@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: warmtuna
+Version: 1.0dev
+Summary: mysql warm backup plugin for holland
+Home-page: http://hollandbackup.org
+Author: Andrew Garner
+Author-email: muzazzi@gmail.com
+License: BSD
+Description: UNKNOWN
+Platform: UNKNOWN
